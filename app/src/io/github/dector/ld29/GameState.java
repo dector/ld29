@@ -24,6 +24,7 @@ public class GameState extends FlxState {
     private boolean levelDone;
 
     private long restoreInfoTimestamp;
+    private long fadingTimestamp;
 
     @Override
     public void create() {
@@ -71,6 +72,9 @@ public class GameState extends FlxState {
             if (FlxG.keys.R) {
                 FlxG.resetState();
             }
+            if (FlxG.keys.N) {
+                nextLevel();
+            }
         }
 
         if (! levelDone && FlxG.mouse.justPressed()) {
@@ -83,32 +87,41 @@ public class GameState extends FlxState {
 
             if (levelDone) {
                 infoText.setText(Level.current.getCompleteText());
-
-                FlxG.fade(0x88000000, 1.5f, new IFlxCamera() {
-                    @Override
-                    public void callback() {
-                        if (Level.current.getNextLevel() != null) {
-                            try {
-                                Level.current = Level.current.getNextLevel().newInstance();
-                            } catch (Exception e) {
-                            }
-                        } else {
-                            FlxG.switchState(new SplashState());
-                        }
-                    }
-                });
+                fadingTimestamp = System.currentTimeMillis() + 1000;
             } else {
                 infoText.setText(Level.current.getFailText());
                 restoreInfoTimestamp = System.currentTimeMillis() + 2000;
             }
         }
 
-        if (restoreInfoTimestamp != 0 && restoreInfoTimestamp <= System.currentTimeMillis()) {
+        long currentTimestamp = System.currentTimeMillis();
+        if (restoreInfoTimestamp != 0 && restoreInfoTimestamp <= currentTimestamp) {
             infoText.setText(Level.current.getGoalText());
             restoreInfoTimestamp = 0;
         }
+        if (fadingTimestamp != 0 && fadingTimestamp <= currentTimestamp) {
+            nextLevel();
+            fadingTimestamp = 0;
+        }
 
         updateFishes();
+    }
+
+    private void nextLevel() {
+        final Class<? extends Level> nextLevel = Level.current.getNextLevel();
+
+        if (nextLevel != null) {
+            FlxG.fade(0x88000000, 1.5f, new IFlxCamera() {
+                @Override
+                public void callback() {
+                    try {
+                        Level.current = nextLevel.newInstance();
+                        FlxG.resetState();
+                    } catch (Exception e) {
+                    }
+                }
+            });
+        }
     }
 
     private void updateFishes() {

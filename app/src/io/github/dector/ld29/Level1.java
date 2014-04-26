@@ -5,7 +5,7 @@ import org.flixel.FlxObject;
 
 import java.util.List;
 
-public class Level0 extends Level {
+public class Level1 extends Level {
 
     private final int[] fishColors = new int[] {
             0xff0000, 0x00ff00, 0x0000ff
@@ -22,7 +22,8 @@ public class Level0 extends Level {
                 Fish fish = (Fish) object;
 
                 if (cam.x <= fish.x && fish.x + fish.width <= cam.x + cam.width
-                        && cam.y <= fish.y && fish.y + fish.height <= cam.y + cam.height) {
+                        && cam.y <= fish.y && fish.y + fish.height <= cam.y + cam.height
+                        && ((fish.getColor() & 0xff0000) == 0xff0000)) {
                     result = true;
                 }
             }
@@ -33,7 +34,11 @@ public class Level0 extends Level {
 
     @Override
     public int newColor() {
-        return fishColors[MathUtils.random(fishColors.length - 1)];
+        int colorIndex = MathUtils.random(fishColors.length - 1);
+        if (colorIndex == 0 && MathUtils.random() > .1f) {
+            colorIndex = MathUtils.random(fishColors.length - 1);
+        }
+        return fishColors[colorIndex];
     }
 
     @Override
@@ -43,16 +48,16 @@ public class Level0 extends Level {
 
     @Override
     public String getGoalText() {
-        return "Try to take picture of some fish";
+        return "Now try to get photo for red fish";
     }
 
     @Override
     public String getFailText() {
-        return "No-no. Make photo of whole fish";
+        return "We need red fish";
     }
 
     @Override
     public Class<? extends Level> getNextLevel() {
-        return Level1.class;
+        return null;
     }
 }
