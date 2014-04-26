@@ -31,5 +31,7 @@ public abstract class Level {
         return completeText[MathUtils.random(completeText.length - 1)];
     }
 
+    public abstract String getFailText();
+
     public abstract Class<? extends Level> getNextLevel();
 }

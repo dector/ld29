@@ -47,6 +47,11 @@ public class Level0 extends Level {
     }
 
     @Override
+    public String getFailText() {
+        return "No-no. Make photo of whole fish";
+    }
+
+    @Override
     public Class<? extends Level> getNextLevel() {
         return null;
     }

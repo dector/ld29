@@ -23,6 +23,8 @@ public class GameState extends FlxState {
 
     private boolean levelDone;
 
+    private long restoreInfoTimestamp;
+
     @Override
     public void create() {
         FlxG.debug = true;
@@ -95,7 +97,15 @@ public class GameState extends FlxState {
                         }
                     }
                 });
+            } else {
+                infoText.setText(Level.current.getFailText());
+                restoreInfoTimestamp = System.currentTimeMillis() + 2000;
             }
+        }
+
+        if (restoreInfoTimestamp != 0 && restoreInfoTimestamp <= System.currentTimeMillis()) {
+            infoText.setText(Level.current.getGoalText());
+            restoreInfoTimestamp = 0;
         }
 
         updateFishes();
