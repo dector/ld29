@@ -111,13 +111,12 @@ public class GameState extends FlxState {
         }
 
         long currentTimestamp = System.currentTimeMillis();
-        if (restoreInfoTimestamp != 0 && restoreInfoTimestamp <= currentTimestamp) {
-            infoText.setText(Level.current.getGoalText());
-            restoreInfoTimestamp = 0;
-        }
         if (fadingTimestamp != 0 && fadingTimestamp <= currentTimestamp) {
             nextLevel();
             fadingTimestamp = 0;
+        } else if (restoreInfoTimestamp != 0 && restoreInfoTimestamp <= currentTimestamp) {
+            infoText.setText(Level.current.getGoalText());
+            restoreInfoTimestamp = 0;
         }
 
         updateFishes();

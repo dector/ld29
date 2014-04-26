@@ -9,8 +9,6 @@ public abstract class Level {
 
     public static Level current = new Level0();
 
-    //
-
     private static final String[] completeText = {
             "Well done!",
             "Awesome!",

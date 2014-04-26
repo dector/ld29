@@ -8,7 +8,7 @@ import java.util.List;
 public class Level1 extends Level {
 
     private final int[] fishColors = new int[] {
-            0xff0000, 0x00ff00, 0x0000ff
+            0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0x00ffff
     };
 
     @Override
@@ -43,12 +43,12 @@ public class Level1 extends Level {
 
     @Override
     public int getMaxFishCount() {
-        return 10;
+        return 20;
     }
 
     @Override
     public String getGoalText() {
-        return "Now try to get photo for red fish";
+        return "Now try to get photo of red fish";
     }
 
     @Override
