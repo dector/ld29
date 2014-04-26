@@ -47,8 +47,20 @@ public class GameState extends FlxState {
 
         add(background);
         add(fishes);
+        add(getFishesEmmiters());
         add(hud);
         add(pointer);
+    }
+
+    private FlxGroup getFishesEmmiters() {
+        FlxGroup emmiters = new FlxGroup();
+
+        for (FlxBasic obj : fishes.members) {
+            Fish fish = (Fish) obj;
+            emmiters.add(fish.getEmmiter());
+        }
+
+        return emmiters;
     }
 
     private FlxGroup createFinishes() {
@@ -74,6 +86,10 @@ public class GameState extends FlxState {
             }
             if (FlxG.keys.N) {
                 nextLevel();
+            }
+
+            if (FlxG.keys.P) {
+                ((Fish) fishes.getRandom()).bubble();
             }
         }
 

@@ -1,6 +1,7 @@
 package io.github.dector.ld29;
 
 import com.badlogic.gdx.math.MathUtils;
+import org.flixel.FlxEmitter;
 import org.flixel.FlxG;
 import org.flixel.FlxSprite;
 
@@ -10,7 +11,17 @@ public class Fish extends FlxSprite {
         RANDOM, LEFT, RIGHT
     }
 
+    private long lastBubbleTime;
+    private FlxEmitter emitter;
+
     public Fish() {
+        emitter = new FlxEmitter();
+        emitter.setMaxSize(5);
+
+        for (int i = 0; i < emitter.getMaxSize(); i++) {
+            emitter.add(new Bubble());
+        }
+
         init();
         startFrom(StartPosition.RANDOM);
     }
@@ -26,6 +37,8 @@ public class Fish extends FlxSprite {
         int color = 0xff000000
                 | Level.current.newColor();
         setColor(color);
+
+        lastBubbleTime = System.currentTimeMillis() + MathUtils.random(1000, 4000);
     }
 
     public void setColor(int color) {
@@ -62,5 +75,30 @@ public class Fish extends FlxSprite {
 
         setFacing(facing);
         velocity.x = facing * MathUtils.random(10, 100);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        emitter.x = x + (getFacing() < 0 ? 10 : (width - 10));
+        emitter.y = y + height / 2;
+
+        long currentTime = System.currentTimeMillis();
+        if (lastBubbleTime <= currentTime) {
+            bubble();
+            lastBubbleTime = currentTime + MathUtils.random(2000, 5000);
+        }
+    }
+
+    /*debug*/ void bubble() {
+        emitter.setXSpeed(-10, 10);
+        emitter.setYSpeed(-20, -70);
+        emitter.setRotation(10, 45);
+        emitter.start(false, 5f, .1f, MathUtils.random(1, emitter.getMaxSize()));
+    }
+
+    public FlxEmitter getEmmiter() {
+        return emitter;
     }
 }
