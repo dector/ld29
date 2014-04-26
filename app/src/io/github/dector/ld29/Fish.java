@@ -16,8 +16,8 @@ public class Fish extends FlxSprite {
     }
 
     public void init() {
-        int h = MathUtils.random(10, 30);
-        int w = (int) (h * MathUtils.random(1.5f, 3f));
+        height = MathUtils.random(10, 30);
+        width = height * MathUtils.random(1.5f, 3f);
 
         /*int color = 0xff << 24
                 | MathUtils.random(0x00, 0xff) << 16
@@ -26,7 +26,14 @@ public class Fish extends FlxSprite {
         int[] fishColors = Level.current.fishColors;
         int color = 0xff000000
                 | fishColors[MathUtils.random(fishColors.length - 1)];
-        makeGraphic(w, h, color);
+        setColor(color);
+    }
+
+    public void setColor(int color) {
+        if (getColor() != color) {
+            super.setColor(color);
+            makeGraphic((int) width, (int) height, color);
+        }
     }
 
     public void startFrom(StartPosition start) {

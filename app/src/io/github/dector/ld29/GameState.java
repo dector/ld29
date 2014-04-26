@@ -10,6 +10,8 @@ import java.util.List;
 
 public class GameState extends FlxState {
 
+    private FlxSound shotSound;
+
     private FlxSprite background;
 
     private FlxGroup fishes;
@@ -24,6 +26,8 @@ public class GameState extends FlxState {
     @Override
     public void create() {
         FlxG.debug = true;
+
+//        shotSound = FlxG.loadSound("assets/shot.wav");
 
         background = new FlxSprite(0, 0);
         background.loadGraphic("assets/background.png");
@@ -67,35 +71,35 @@ public class GameState extends FlxState {
             }
         }
 
-        if (! levelDone) {
-            if (FlxG.mouse.justPressed()) {
-                pointer.makePhoto();
+        if (! levelDone && FlxG.mouse.justPressed()) {
+//            shotSound.play(true);
 
-                List<FlxObject> objects = getObjectsOnPhoto();
-                levelDone = Level.current.makePhoto(pointer, objects);
+            pointer.makePhoto();
 
-                if (levelDone) {
-                    infoText.setText(Level.current.wellDoneText);
+            List<FlxObject> objects = getObjectsOnPhoto();
+            levelDone = Level.current.makePhoto(pointer, objects);
 
-                    if (Level.current.nextLevel != null) {
-                        FlxG.fade(0x88000000, 3f, new IFlxCamera() {
-                            @Override
-                            public void callback() {
-                                if (Level.current.nextLevel != null) {
-                                    try {
-                                        Level.current = Level.current.nextLevel.newInstance();
-                                    } catch (Exception e) {
-                                    }
+            if (levelDone) {
+                infoText.setText(Level.current.wellDoneText);
+
+                if (Level.current.nextLevel != null) {
+                    FlxG.fade(0x88000000, 3f, new IFlxCamera() {
+                        @Override
+                        public void callback() {
+                            if (Level.current.nextLevel != null) {
+                                try {
+                                    Level.current = Level.current.nextLevel.newInstance();
+                                } catch (Exception e) {
                                 }
-                                FlxG.resetState();
                             }
-                        });
-                    }
+                            FlxG.resetState();
+                        }
+                    });
                 }
             }
-
-            updateFishes();
         }
+
+        updateFishes();
     }
 
     private void updateFishes() {

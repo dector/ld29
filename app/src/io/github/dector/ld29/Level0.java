@@ -7,13 +7,13 @@ import java.util.List;
 public class Level0 extends Level {
 
     {
-        maxFishCount = 20;
+        maxFishCount = 10;
 
         fishColors = new int[] {
                 0xff0000, 0x00ff00, 0x0000ff
         };
 
-        goalText = "Try camera at some fish";
+        goalText = "Try to take picture of some fish";
     }
 
     @Override
