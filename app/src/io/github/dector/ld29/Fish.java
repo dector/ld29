@@ -23,9 +23,8 @@ public class Fish extends FlxSprite {
                 | MathUtils.random(0x00, 0xff) << 16
                 | MathUtils.random(0x00, 0xff) << 8
                 | MathUtils.random(0x00, 0xff);*/
-        int[] fishColors = Level.current.fishColors;
         int color = 0xff000000
-                | fishColors[MathUtils.random(fishColors.length - 1)];
+                | Level.current.newColor();
         setColor(color);
     }
 

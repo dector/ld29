@@ -39,7 +39,7 @@ public class GameState extends FlxState {
         hud = new FlxGroup();
         infoText = new FlxText(10, 10, FlxG.width - 20);
         infoText.setFormat(null, 25);
-        infoText.setText(Level.current.goalText);
+        infoText.setText(Level.current.getGoalText());
         hud.add(infoText);
 
         add(background);
@@ -51,7 +51,7 @@ public class GameState extends FlxState {
     private FlxGroup createFinishes() {
         fishes = new FlxGroup();
 
-        for (int i = 0; i < Level.current.maxFishCount; i++) {
+        for (int i = 0; i < Level.current.getMaxFishCount(); i++) {
             fishes.add(new Fish());
         }
 
@@ -80,22 +80,21 @@ public class GameState extends FlxState {
             levelDone = Level.current.makePhoto(pointer, objects);
 
             if (levelDone) {
-                infoText.setText(Level.current.wellDoneText);
+                infoText.setText(Level.current.getCompleteText());
 
-                if (Level.current.nextLevel != null) {
-                    FlxG.fade(0x88000000, 3f, new IFlxCamera() {
-                        @Override
-                        public void callback() {
-                            if (Level.current.nextLevel != null) {
-                                try {
-                                    Level.current = Level.current.nextLevel.newInstance();
-                                } catch (Exception e) {
-                                }
+                FlxG.fade(0x88000000, 1.5f, new IFlxCamera() {
+                    @Override
+                    public void callback() {
+                        if (Level.current.getNextLevel() != null) {
+                            try {
+                                Level.current = Level.current.getNextLevel().newInstance();
+                            } catch (Exception e) {
                             }
-                            FlxG.resetState();
+                        } else {
+                            FlxG.switchState(new SplashState());
                         }
-                    });
-                }
+                    }
+                });
             }
         }
 
