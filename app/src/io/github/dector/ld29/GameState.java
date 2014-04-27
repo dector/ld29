@@ -178,6 +178,14 @@ public class GameState extends BaseState {
             MusicManager.instance.switchMute();
             updateIndicators();
         }
+        if (FlxG.keys.justPressed("PLUS")) {
+            MusicManager.instance.volumeUp();
+            updateIndicators();
+        }
+        if (FlxG.keys.justPressed("MINUS")) {
+            MusicManager.instance.volumeDown();
+            updateIndicators();
+        }
 
         if (! levelDone && FlxG.mouse.justPressed()) {
             List<FlxObject> objects = getObjectsOnPhoto();

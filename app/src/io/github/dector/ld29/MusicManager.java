@@ -26,7 +26,11 @@ public class MusicManager {
     }
 
     public void switchMute() {
-        muted = ! muted;
+        setMuted(! muted);
+    }
+
+    private void setMuted(boolean muted) {
+        this.muted = muted;
 
         if (muted) {
             pause();
@@ -37,5 +41,37 @@ public class MusicManager {
 
     public boolean isMuted() {
         return muted;
+    }
+
+    public boolean volumeUp() {
+        setMuted(false);
+
+        float volume = music.getVolume();
+
+        volume += .1f;
+        if (volume > 1) {
+            volume = 1;
+        }
+
+        music.setVolume(volume);
+
+        return volume != 1;
+    }
+
+    public boolean volumeDown() {
+        float volume = music.getVolume();
+
+        volume -= .1f;
+        if (volume < 0) {
+            volume = 0;
+        }
+
+        if (volume == 0) {
+            setMuted(true);
+        }
+
+        music.setVolume(volume);
+
+        return volume != 0;
     }
 }
