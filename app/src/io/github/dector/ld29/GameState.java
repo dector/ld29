@@ -17,6 +17,7 @@ public class GameState extends FlxState {
     private FlxGroup plants;
 
     private FlxGroup fishes;
+    private FlxGroup fishEmmiters;
 
     private FlxGroup hud;
     private FlxText infoText;
@@ -51,9 +52,11 @@ public class GameState extends FlxState {
         infoText.setText(Level.current.getGoalText());
         hud.add(infoText);
 
+        fishEmmiters = getFishesEmmiters();
+
         add(background);
         add(fishes);
-        add(getFishesEmmiters());
+        add(fishEmmiters);
         add(plants);
         add(hud);
         add(pointer);
@@ -244,6 +247,9 @@ public class GameState extends FlxState {
         if (! removedFishes.isEmpty()) {
             for (Fish fish : removedFishes) {
                 fishes.remove(fish);
+
+                FlxEmitter emitter = fish.getEmmiter();
+                fishEmmiters.remove(emitter);
             }
             removedFishes.clear();
         }
@@ -251,6 +257,7 @@ public class GameState extends FlxState {
         if (! newFishes.isEmpty()) {
             for (Fish fish : newFishes) {
                 fishes.add(fish);
+                fishEmmiters.add(fish.getEmmiter());
             }
             newFishes.clear();
         }
