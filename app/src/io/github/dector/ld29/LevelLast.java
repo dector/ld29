@@ -34,7 +34,7 @@ public class LevelLast extends Level {
 
     @Override
     public String getGoalText() {
-        return "Relax. <F> for fullscreen";
+        return "Relax";
     }
 
     @Override

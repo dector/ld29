@@ -1,7 +1,5 @@
 package io.github.dector.ld29;
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.math.MathUtils;
 import org.flixel.*;
 import org.flixel.event.IFlxCamera;
@@ -9,7 +7,7 @@ import org.flixel.event.IFlxCamera;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameState extends FlxState {
+public class GameState extends BaseState {
 
     private SoundManager soundManager;
 
@@ -156,7 +154,8 @@ public class GameState extends FlxState {
         super.update();
 
         if (FlxG.keys.ESCAPE) {
-            Gdx.app.exit();
+            MusicManager.instance.pause();
+            FlxG.switchState(new SplashState());
         }
         if (FlxG.debug) {
             if (FlxG.keys.R) {
@@ -178,9 +177,6 @@ public class GameState extends FlxState {
         if (FlxG.keys.justPressed("M")) {
             MusicManager.instance.switchMute();
             updateIndicators();
-        }
-        if (FlxG.keys.justPressed("F")) {
-            toggleFullscreen();
         }
 
         if (! levelDone && FlxG.mouse.justPressed()) {
@@ -234,30 +230,6 @@ public class GameState extends FlxState {
         updateFishes();
 
         actionStarter.update();
-    }
-
-    private void toggleFullscreen() {
-        if (Gdx.graphics.isFullscreen()) {
-            Gdx.graphics.setDisplayMode(800, 600, false);
-        } else {
-            Graphics.DisplayMode[] modes = Gdx.graphics.getDisplayModes();
-
-            Graphics.DisplayMode selectedMode = null;
-            if (modes.length > 0) {
-                selectedMode = modes[modes.length - 1];
-            }
-
-            for (Graphics.DisplayMode mode : modes) {
-                if (mode.width == 800 && mode.height == 600) {
-                    selectedMode = mode;
-                    break;
-                }
-            }
-
-            if (selectedMode != null) {
-                Gdx.graphics.setDisplayMode(selectedMode.width, selectedMode.height, true);
-            }
-        }
     }
 
     private void nextLevel() {
