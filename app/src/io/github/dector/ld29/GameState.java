@@ -34,7 +34,7 @@ public class GameState extends BaseState {
 
     @Override
     public void create() {
-        FlxG.debug = true;
+        FlxG.debug = false;
 
         soundManager = new SoundManager();
 
