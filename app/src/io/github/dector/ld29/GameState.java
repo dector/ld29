@@ -187,10 +187,10 @@ public class GameState extends FlxState {
         }
 
         if (! levelDone && FlxG.mouse.justPressed()) {
-            pointer.makePhoto();
-
             List<FlxObject> objects = getObjectsOnPhoto();
             Level.ShotResult shotResult = Level.current.makePhoto(pointer, objects);
+
+            pointer.makePhoto(shotResult);
 
             switch (shotResult.type) {
                 case WRONG:

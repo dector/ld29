@@ -17,7 +17,11 @@ public class Pointer extends FlxSprite {
         y = FlxG.mouse.screenY - height / 2;
     }
 
-    public void makePhoto() {
-        FlxG.flash(0x88ffffff, .5f);
+    public void makePhoto(Level.ShotResult shotResult) {
+        if (shotResult.type == Level.ShotResultType.WRONG) {
+            FlxG.flash(0x88eeeeee, .5f);
+        } else {
+            FlxG.flash(0x88ffffff, .5f);
+        }
     }
 }
