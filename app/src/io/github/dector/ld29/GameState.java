@@ -1,6 +1,7 @@
 package io.github.dector.ld29;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.math.MathUtils;
 import org.flixel.*;
 import org.flixel.event.IFlxCamera;
@@ -172,6 +173,17 @@ public class GameState extends FlxState {
         if (FlxG.keys.justPressed("M")) {
             MusicManager.instance.switchMute();
             updateIndicators();
+        }
+        if (FlxG.keys.justPressed("F")) {
+            if (Gdx.graphics.isFullscreen()) {
+                Gdx.graphics.setDisplayMode(800, 600, false);
+            } else {
+                Graphics.DisplayMode[] modes = Gdx.graphics.getDisplayModes();
+                if (modes.length > 0) {
+                    Graphics.DisplayMode mode = modes[modes.length - 1];
+                    Gdx.graphics.setDisplayMode(mode.width, mode.height, true);
+                }
+            }
         }
 
         if (! levelDone && FlxG.mouse.justPressed()) {
