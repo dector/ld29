@@ -65,6 +65,10 @@ public abstract class Level {
 
     public abstract int getMaxFishCount();
 
+    public int getMaxPlantsCount() {
+        return 10;
+    }
+
     public abstract String getGoalText();
 
     public String getCorrectText() {

@@ -14,6 +14,8 @@ public class GameState extends FlxState {
 
     private FlxSprite background;
 
+    private FlxGroup plants;
+
     private FlxGroup fishes;
 
     private FlxGroup hud;
@@ -26,6 +28,8 @@ public class GameState extends FlxState {
     private long restoreInfoTimestamp;
     private long fadingTimestamp;
 
+    private ActionStarter actionStarter;
+
     @Override
     public void create() {
         FlxG.debug = true;
@@ -36,6 +40,8 @@ public class GameState extends FlxState {
         background.loadGraphic("assets/background.png");
 
         fishes = createFinishes();
+
+        plants = createPlants();
 
         pointer = new Pointer();
 
@@ -48,6 +54,7 @@ public class GameState extends FlxState {
         add(background);
         add(fishes);
         add(getFishesEmmiters());
+        add(plants);
         add(hud);
         add(pointer);
     }
@@ -64,13 +71,55 @@ public class GameState extends FlxState {
     }
 
     private FlxGroup createFinishes() {
-        fishes = new FlxGroup();
+        FlxGroup fishes = new FlxGroup();
 
         for (int i = 0; i < Level.current.getMaxFishCount(); i++) {
             fishes.add(new Fish());
         }
 
         return fishes;
+    }
+
+    private FlxGroup createPlants() {
+        FlxGroup plants = new FlxGroup();
+
+        if (actionStarter == null) {
+            actionStarter = new ActionStarter();
+        }
+
+        int stepX = FlxG.width / Level.current.getMaxPlantsCount();
+        int diffX = stepX / 2;
+
+        for (int i = 0; i < Level.current.getMaxPlantsCount(); i++) {
+            final FlxSprite plant = new FlxSprite();
+            plant.loadGraphic("assets/plant.png", true, false, 12, 28);
+            plant.setColor(0x00ff00);
+            plant.addAnimation("stand", new int[] { 1 }, 1, true);
+            plant.addAnimation("wave", new int[] { 0, 1, 2, 1 }, 1, true);
+//            plant.addAnimation("wave_long", new int[] { 0, 0, 1, 1, 2, 2, 1, 1 }, 1, true);
+//            plant.addAnimation("wave_left", new int[] { 0, 0, 0, 1, 1 }, 1, true);
+//            plant.addAnimation("wave_right", new int[] { 1, 2, 2, 2, 2 }, 1, true);
+            actionStarter.startDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    plant.play("wave", true, MathUtils.random(0, 2));
+                }
+            }, MathUtils.random(0, 2000));
+            plant.origin.make(0, 0);
+            int scale = MathUtils.random(2, 10);
+            plant.width = 12 * scale;
+            plant.height = 28 * scale;
+            plant.scale.make(scale, scale);
+//            plant.x = MathUtils.random(0, FlxG.width);
+            float x = i * stepX + MathUtils.random(-1f, 1f) * diffX;
+            if (x < 0) x = plant.width / 2;
+            if (x > FlxG.width) x = FlxG.width - plant.width / 2;
+            plant.x = x;
+            plant.y = FlxG.height - plant.height;
+            plants.add(plant);
+        }
+
+        return plants;
     }
 
     @Override
@@ -145,6 +194,8 @@ public class GameState extends FlxState {
         }
 
         updateFishes();
+
+        actionStarter.update();
     }
 
     private void nextLevel() {
