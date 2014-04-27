@@ -138,6 +138,6 @@ public class Level3 extends Level {
 
     @Override
     public Class<? extends Level> getNextLevel() {
-        return null;
+        return LevelLast.class;
     }
 }

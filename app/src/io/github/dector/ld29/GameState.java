@@ -77,6 +77,11 @@ public class GameState extends FlxState {
 
         MusicManager.instance.play();
         updateIndicators();
+
+        if (Level.current.getClass() == LevelLast.class) {
+            levelDone = true;
+            pointer.visible = false;
+        }
     }
 
     private void updateIndicators() {
@@ -175,15 +180,7 @@ public class GameState extends FlxState {
             updateIndicators();
         }
         if (FlxG.keys.justPressed("F")) {
-            if (Gdx.graphics.isFullscreen()) {
-                Gdx.graphics.setDisplayMode(800, 600, false);
-            } else {
-                Graphics.DisplayMode[] modes = Gdx.graphics.getDisplayModes();
-                if (modes.length > 0) {
-                    Graphics.DisplayMode mode = modes[modes.length - 1];
-                    Gdx.graphics.setDisplayMode(mode.width, mode.height, true);
-                }
-            }
+            toggleFullscreen();
         }
 
         if (! levelDone && FlxG.mouse.justPressed()) {
@@ -237,6 +234,30 @@ public class GameState extends FlxState {
         updateFishes();
 
         actionStarter.update();
+    }
+
+    private void toggleFullscreen() {
+        if (Gdx.graphics.isFullscreen()) {
+            Gdx.graphics.setDisplayMode(800, 600, false);
+        } else {
+            Graphics.DisplayMode[] modes = Gdx.graphics.getDisplayModes();
+
+            Graphics.DisplayMode selectedMode = null;
+            if (modes.length > 0) {
+                selectedMode = modes[modes.length - 1];
+            }
+
+            for (Graphics.DisplayMode mode : modes) {
+                if (mode.width == 800 && mode.height == 600) {
+                    selectedMode = mode;
+                    break;
+                }
+            }
+
+            if (selectedMode != null) {
+                Gdx.graphics.setDisplayMode(selectedMode.width, selectedMode.height, true);
+            }
+        }
     }
 
     private void nextLevel() {
