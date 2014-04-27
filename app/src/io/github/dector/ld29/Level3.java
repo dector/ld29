@@ -3,17 +3,18 @@ package io.github.dector.ld29;
 import com.badlogic.gdx.math.MathUtils;
 import org.flixel.FlxObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Level2 extends Level {
+public class Level3 extends Level {
 
-    private static final int BIG_FISH_COUNT_GOAL = 3;
-
-    private final int[] fishColors = new int[] {
-            0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0x00ffff
-    };
+    private static final int PHOTOS_GOAL = 3;
 
     private int photosCount;
+
+    private boolean checkResult;
+    private List<Fish> bigFishes = new ArrayList<Fish>();
+    private List<Fish> smallFishes = new ArrayList<Fish>();
 
     @Override
     public ShotResult makePhoto(Pointer cam, List<FlxObject> objects) {
@@ -21,24 +22,23 @@ public class Level2 extends Level {
 
         boolean aimedOnBigFish = false;
 
-        for (int i = 0; i < objects.size() && result.getType() != ShotResultType.LEVEL_FINISHED; i++) {
+        for (int i = 0; i < objects.size(); i++) {
             FlxObject object = objects.get(i);
 
             if (object instanceof Fish) {
                 Fish fish = (Fish) object;
 
+                checkResult |= true;
+
                 boolean fullInPointer = isObjectFullInPointer(cam, fish);
                 boolean bigEnough = fish.getSize().scaleFactor >= Fish.Size.BIG.scaleFactor;
                 aimedOnBigFish |= bigEnough;
 
-                if (fullInPointer && bigEnough && ! fish.hasPhoto) {
-                    fish.hasPhoto = true;
-
-                    photosCount++;
-                    if (photosCount == BIG_FISH_COUNT_GOAL) {
-                        result.setType(ShotResultType.LEVEL_FINISHED);
+                if (fullInPointer && ! fish.hasPhoto) {
+                    if (bigEnough) {
+                        bigFishes.add(fish);
                     } else {
-                        result.setType(ShotResultType.CORRECT);
+                        smallFishes.add(fish);
                     }
                 } else if (! result.hasMessage()) {
                     if (fish.hasPhoto) {
@@ -50,8 +50,38 @@ public class Level2 extends Level {
             }
         }
 
+        if (checkResult) {
+            if (bigFishes.isEmpty()) {
+                result.setMessage("Can't see big fish here, huh");
+            } else if (smallFishes.isEmpty()) {
+                result.setMessage("Try to catch smaller one with bigger fish");
+            } else {
+
+                for (Fish f : bigFishes) {
+                    f.hasPhoto = true;
+                }
+                for (Fish f : smallFishes) {
+                    f.hasPhoto = true;
+                }
+
+                bigFishes.clear();
+                smallFishes.clear();
+
+                photosCount++;
+                if (photosCount == PHOTOS_GOAL) {
+                    result.setType(ShotResultType.LEVEL_FINISHED);
+                } else {
+                    result.setType(ShotResultType.CORRECT);
+                }
+            }
+
+            checkResult = false;
+        }
+
         if (objects.isEmpty()) {
             result.setMessage("No any fish in camera viewfinder");
+        } else if (objects.size() == 1) {
+            result.setMessage("We need two fishes on one photo");
         } else if (! aimedOnBigFish) {
             result.setMessage("Fish isn't big enough");
         }
@@ -67,8 +97,9 @@ public class Level2 extends Level {
 
     @Override
     public int newColor() {
-        int colorIndex = MathUtils.random(fishColors.length - 1);
-        return fishColors[colorIndex];
+        return MathUtils.random(0x00, 0xff) << 16
+                | MathUtils.random(0x00, 0xff) << 8
+                | MathUtils.random(0x00, 0xff);
     }
 
     @Override
@@ -83,15 +114,20 @@ public class Level2 extends Level {
 
     @Override
     public int getMaxFishCount() {
-        return 20;
+        return 30;
+    }
+
+    @Override
+    public int getMaxPlantsCount() {
+        return 15;
     }
 
     @Override
     public String getGoalText() {
         if (photosCount == 0) {
-            return "We need 3 photos of big fish";
+            return "Now make two photos of big fish with smaller one";
         } else {
-            return "Only " + (BIG_FISH_COUNT_GOAL - photosCount) + " photos with big fish left";
+            return "Only " + (PHOTOS_GOAL - photosCount) + " photos left";
         }
     }
 
@@ -102,6 +138,6 @@ public class Level2 extends Level {
 
     @Override
     public Class<? extends Level> getNextLevel() {
-        return Level3.class;
+        return null;
     }
 }
