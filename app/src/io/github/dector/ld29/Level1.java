@@ -24,7 +24,7 @@ public class Level1 extends Level {
                 Fish fish = (Fish) object;
 
                 boolean fullInPointer = isObjectFullInPointer(cam, fish);
-                boolean redFish = (fish.getColor() | 0xff0000) == 0xff0000;
+                boolean redFish = (fish.getColor() & 0xffffff) == 0xff0000;
                 aimedOnRedFish |= redFish;
 
                 if (fullInPointer && redFish) {

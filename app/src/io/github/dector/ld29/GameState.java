@@ -10,8 +10,7 @@ import java.util.List;
 
 public class GameState extends FlxState {
 
-    private FlxSound shotSound;
-    private FlxSound shotWrongSound;
+    private SoundManager soundManager;
 
     private FlxSprite background;
 
@@ -35,8 +34,7 @@ public class GameState extends FlxState {
     public void create() {
         FlxG.debug = true;
 
-        shotSound = FlxG.loadSound("assets/shot.wav");
-        shotWrongSound = FlxG.loadSound("assets/shotWrong.wav");
+        soundManager = new SoundManager();
 
         background = new FlxSprite(0, 0);
         background.loadGraphic("assets/background.png");
@@ -59,6 +57,8 @@ public class GameState extends FlxState {
         add(plants);
         add(hud);
         add(pointer);
+
+        MusicManager.instance.play();
     }
 
     private FlxGroup getFishesEmmiters() {
@@ -148,6 +148,10 @@ public class GameState extends FlxState {
             }
         }
 
+        if (FlxG.keys.justPressed("M")) {
+            MusicManager.instance.switchMute();
+        }
+
         if (! levelDone && FlxG.mouse.justPressed()) {
             pointer.makePhoto();
 
@@ -156,7 +160,7 @@ public class GameState extends FlxState {
 
             switch (shotResult.type) {
                 case WRONG:
-                    shotWrongSound.play(true);
+                    soundManager.playWrong();
                     if (shotResult.hasMessage()) {
                         infoText.setText(shotResult.getMessage());
                     } else {
@@ -165,7 +169,7 @@ public class GameState extends FlxState {
                     restoreInfoTimestamp = System.currentTimeMillis() + 2000;
                     break;
                 case CORRECT:
-                    shotSound.play(true);
+                    soundManager.playShot();
                     if (shotResult.hasMessage()) {
                         infoText.setText(shotResult.getMessage());
                     } else {
@@ -174,7 +178,7 @@ public class GameState extends FlxState {
                     restoreInfoTimestamp = System.currentTimeMillis() + 1000;
                     break;
                 case LEVEL_FINISHED:
-                    shotSound.play(true);
+                    soundManager.playShot();
                     if (shotResult.hasMessage()) {
                         infoText.setText(shotResult.getMessage());
                     } else {
