@@ -5,6 +5,6 @@ import org.flixel.FlxDesktopApplication;
 public class DesktopLauncher {
 
     public static void main(String[] args) {
-        new FlxDesktopApplication(new Game(), 800, 600);
+        new FlxDesktopApplication(new Game(), "Blue waves", 800, 600, false);
     }
 }
