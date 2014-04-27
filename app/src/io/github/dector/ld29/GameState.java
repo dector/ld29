@@ -12,6 +12,8 @@ public class GameState extends FlxState {
 
     private SoundManager soundManager;
 
+    private FlxSprite musicIndicator;
+
     private FlxSprite background;
 
     private FlxGroup plants;
@@ -47,10 +49,21 @@ public class GameState extends FlxState {
         pointer = new Pointer();
 
         hud = new FlxGroup();
+
         infoText = new FlxText(10, 10, FlxG.width - 20);
         infoText.setFormat(null, 25);
         infoText.setText(Level.current.getGoalText());
         hud.add(infoText);
+
+        musicIndicator = new FlxSprite(FlxG.width - 16 - 32, FlxG.height - 16 - 32);
+        musicIndicator.loadGraphic("assets/music.png", true, false, 16, 16);
+        musicIndicator.addAnimation("on", new int[] { 0 }, 1);
+        musicIndicator.addAnimation("off", new int[] { 1 }, 1);
+        musicIndicator.scale.make(2, 2);
+        musicIndicator.width = 32;
+        musicIndicator.height = 32;
+        musicIndicator.origin.make(0, 0);
+        hud.add(musicIndicator);
 
         fishEmmiters = getFishesEmmiters();
 
@@ -62,6 +75,11 @@ public class GameState extends FlxState {
         add(pointer);
 
         MusicManager.instance.play();
+        updateIndicators();
+    }
+
+    private void updateIndicators() {
+        musicIndicator.play(MusicManager.instance.isMuted() ? "off" : "on");
     }
 
     private FlxGroup getFishesEmmiters() {
@@ -153,6 +171,7 @@ public class GameState extends FlxState {
 
         if (FlxG.keys.justPressed("M")) {
             MusicManager.instance.switchMute();
+            updateIndicators();
         }
 
         if (! levelDone && FlxG.mouse.justPressed()) {

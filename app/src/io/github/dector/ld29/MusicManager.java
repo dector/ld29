@@ -34,4 +34,8 @@ public class MusicManager {
             play();
         }
     }
+
+    public boolean isMuted() {
+        return muted;
+    }
 }
