@@ -82,6 +82,10 @@ public class GameState extends FlxState {
         }
         if (FlxG.debug) {
             if (FlxG.keys.R) {
+                try {
+                    Level.current = Level.current.getClass().newInstance();
+                } catch (Exception e) {
+                }
                 FlxG.resetState();
             }
             if (FlxG.keys.N) {
@@ -99,14 +103,35 @@ public class GameState extends FlxState {
             pointer.makePhoto();
 
             List<FlxObject> objects = getObjectsOnPhoto();
-            levelDone = Level.current.makePhoto(pointer, objects);
+            Level.ShotResult shotResult = Level.current.makePhoto(pointer, objects);
 
-            if (levelDone) {
-                infoText.setText(Level.current.getCompleteText());
-                fadingTimestamp = System.currentTimeMillis() + 1000;
-            } else {
-                infoText.setText(Level.current.getFailText());
-                restoreInfoTimestamp = System.currentTimeMillis() + 2000;
+            switch (shotResult.type) {
+                case WRONG:
+                    if (shotResult.hasMessage()) {
+                        infoText.setText(shotResult.getMessage());
+                    } else {
+                        infoText.setText(Level.current.getFailText());
+                    }
+                    restoreInfoTimestamp = System.currentTimeMillis() + 2000;
+                    break;
+                case CORRECT:
+                    if (shotResult.hasMessage()) {
+                        infoText.setText(shotResult.getMessage());
+                    } else {
+                        infoText.setText(Level.current.getCorrectText());
+                    }
+                    restoreInfoTimestamp = System.currentTimeMillis() + 1000;
+                    break;
+                case LEVEL_FINISHED:
+                    if (shotResult.hasMessage()) {
+                        infoText.setText(shotResult.getMessage());
+                    } else {
+                        infoText.setText(Level.current.getCorrectText());
+                    }
+                    restoreInfoTimestamp = Long.MAX_VALUE;
+                    fadingTimestamp = System.currentTimeMillis() + 1000;
+                    levelDone = true;
+                    break;
             }
         }
 
@@ -139,17 +164,37 @@ public class GameState extends FlxState {
         }
     }
 
+    // FIXME Dirty hack. Because reused fish sometimes is drawing incorrect for updated scale and size values
+    private List<Fish> removedFishes = new ArrayList<Fish>();
+    private List<Fish> newFishes = new ArrayList<Fish>();
+
     private void updateFishes() {
         for (FlxBasic obj : fishes.members) {
             Fish fish = (Fish) obj;
 
             if (! fish.onScreen()) {
-                fish.init();
-                Fish.StartPosition start = MathUtils.randomBoolean()
-                        ? Fish.StartPosition.LEFT
-                        : Fish.StartPosition.RIGHT;
-                fish.startFrom(start);
+                fish.kill();
+                removedFishes.add(fish);
+
+                int facing = MathUtils.randomBoolean()
+                        ? Fish.LEFT
+                        : Fish.RIGHT;
+                newFishes.add(new Fish(facing));
             }
+        }
+
+        if (! removedFishes.isEmpty()) {
+            for (Fish fish : removedFishes) {
+                fishes.remove(fish);
+            }
+            removedFishes.clear();
+        }
+
+        if (! newFishes.isEmpty()) {
+            for (Fish fish : newFishes) {
+                fishes.add(fish);
+            }
+            newFishes.clear();
         }
     }
 
