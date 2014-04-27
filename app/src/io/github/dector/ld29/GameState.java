@@ -11,6 +11,7 @@ import java.util.List;
 public class GameState extends FlxState {
 
     private FlxSound shotSound;
+    private FlxSound shotWrongSound;
 
     private FlxSprite background;
 
@@ -34,7 +35,8 @@ public class GameState extends FlxState {
     public void create() {
         FlxG.debug = true;
 
-//        shotSound = FlxG.loadSound("assets/shot.wav");
+        shotSound = FlxG.loadSound("assets/shot.wav");
+        shotWrongSound = FlxG.loadSound("assets/shotWrong.wav");
 
         background = new FlxSprite(0, 0);
         background.loadGraphic("assets/background.png");
@@ -147,8 +149,6 @@ public class GameState extends FlxState {
         }
 
         if (! levelDone && FlxG.mouse.justPressed()) {
-//            shotSound.play(true);
-
             pointer.makePhoto();
 
             List<FlxObject> objects = getObjectsOnPhoto();
@@ -156,6 +156,7 @@ public class GameState extends FlxState {
 
             switch (shotResult.type) {
                 case WRONG:
+                    shotWrongSound.play(true);
                     if (shotResult.hasMessage()) {
                         infoText.setText(shotResult.getMessage());
                     } else {
@@ -164,6 +165,7 @@ public class GameState extends FlxState {
                     restoreInfoTimestamp = System.currentTimeMillis() + 2000;
                     break;
                 case CORRECT:
+                    shotSound.play(true);
                     if (shotResult.hasMessage()) {
                         infoText.setText(shotResult.getMessage());
                     } else {
@@ -172,6 +174,7 @@ public class GameState extends FlxState {
                     restoreInfoTimestamp = System.currentTimeMillis() + 1000;
                     break;
                 case LEVEL_FINISHED:
+                    shotSound.play(true);
                     if (shotResult.hasMessage()) {
                         infoText.setText(shotResult.getMessage());
                     } else {
